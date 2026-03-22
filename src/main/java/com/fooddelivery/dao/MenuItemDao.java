@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MenuItemDao {
+
     public void addMenuItem(int restaurantId, String name, double price, int quantity, String addons) throws Exception {
         String sql = "INSERT INTO menu_items(restaurant_id, name, price, quantity, addons) VALUES(?,?,?,?,?)";
         try (Connection con = DbConfig.getConnection();
@@ -53,6 +54,25 @@ public class MenuItemDao {
         }
     }
 
+    public void updateQuantity(int menuItemId, int quantity) throws Exception {
+        String sql = "UPDATE menu_items SET quantity=? WHERE id=?";
+        try (Connection con = DbConfig.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, quantity);
+            ps.setInt(2, menuItemId);
+            ps.executeUpdate();
+        }
+    }
+
+    public void updateAddons(int menuItemId, String addons) throws Exception {
+        String sql = "UPDATE menu_items SET addons=? WHERE id=?";
+        try (Connection con = DbConfig.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, addons);
+            ps.setInt(2, menuItemId);
+            ps.executeUpdate();
+        }
+    }
     public void reduceQuantity(int menuItemId, int quantity) throws Exception {
         String sql = "UPDATE menu_items SET quantity = quantity - ? WHERE id = ?";
         try (Connection con = DbConfig.getConnection();

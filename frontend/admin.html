@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Restaurant Admin</title>
+  <style>
+    body { font-family: Arial; margin: 20px; }
+    .section { border: 1px solid #ccc; padding: 15px; margin-bottom: 20px; }
+    .msg { margin-top: 6px; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h2>Restaurant Admin Panel</h2>
+
+  <div class="section">
+    <h3>Register Restaurant</h3>
+    <input id="ownerId" placeholder="Owner ID" />
+    <input id="rName" placeholder="Restaurant Name" />
+    <input id="rAddress" placeholder="Address" />
+    <button onclick="registerRestaurant()">Register</button>
+    <div id="regMsg" class="msg"></div>
+  </div>
+
+  <div class="section">
+    <h3>Add Menu Item</h3>
+    <input id="restIdMenu" placeholder="Restaurant ID" />
+    <input id="itemName" placeholder="Item Name" />
+    <input id="itemPrice" placeholder="Price" />
+    <input id="itemQty" placeholder="Quantity" />
+    <input id="itemAddons" placeholder="Addons" />
+    <button onclick="addMenu()">Add Item</button>
+    <div id="menuMsg" class="msg"></div>
+  </div>
+
+  <div class="section">
+    <h3>Update Menu Item</h3>
+    <input id="menuItemId" placeholder="Menu Item ID" />
+    <input id="menuQty" placeholder="New Quantity" />
+    <input id="menuAddons" placeholder="New Addons" />
+    <select id="menuAvail">
+      <option value="true">Available</option>
+      <option value="false">Not Available</option>
+    </select>
+    <button onclick="updateMenu()">Update</button>
+    <div id="updateMsg" class="msg"></div>
+  </div>
+
+  <div class="section">
+    <h3>Set Schedule</h3>
+    <input id="schedRestId" placeholder="Restaurant ID" />
+    <input id="openTime" placeholder="Open Time (HH:MM)" />
+    <input id="closeTime" placeholder="Close Time (HH:MM)" />
+    <button onclick="setSchedule()">Save</button>
+    <div id="schedMsg" class="msg"></div>
+  </div>
+
+  <div class="section">
+    <h3>Assign Rider to Order</h3>
+    <input id="orderId" placeholder="Order ID" />
+    <input id="riderId" placeholder="Rider ID" />
+    <button onclick="assignRider()">Assign</button>
+    <div id="riderMsg" class="msg"></div>
+  </div>
+
+  <div class="section">
+    <h3>View Payments</h3>
+    <input id="payRestId" placeholder="Restaurant ID" />
+    <button onclick="getPayments()">Get Payments</button>
+    <ul id="payments"></ul>
+  </div>
+
+  <script>
+    const ADMIN_URL = "http://localhost:8080/AdminService";
+
+    async function sendSoap(body) {
+      const res = await fetch(ADMIN_URL, {
+        method: "POST",
+        headers: { "Content-Type": "text/xml" },
+        body
+      });
+      return await res.text();
+    }
+    function parseXML(xmlText) { return new DOMParser().parseFromString(xmlText, "text/xml"); }
+    function getText(node, tag) {
+      const el = node.getElementsByTagNameNS("*", tag)[0];
+      return el ? el.textContent : "";
+    }
+
+    function registerRestaurant() {
+      const body = `
+        <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+                          xmlns:ws="http://wsdl.fooddelivery.com/">
+          <soapenv:Body>
+            <ws:registerRestaurant>
+              <ownerId>${ownerId.value}</ownerId>
+              <name>${rName.value}</name>
+              <address>${rAddress.value}</address>
+            </ws:registerRestaurant>
+          </soapenv:Body>
+        </soapenv:Envelope>`;
+      sendSoap(body).then(() => regMsg.textContent = "✅ Restaurant registered");
+    }
+
+    function addMenu() {
+      const body = `
+        <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+                          xmlns:ws="http://wsdl.fooddelivery.com/">
+          <soapenv:Body>
+            <ws:addMenuItem>
+              <restaurantId>${restIdMenu.value}</restaurantId>
+              <name>${itemName.value}</name>
+              <price>${itemPrice.value}</price>
+              <quantity>${itemQty.value}</quantity>
+              <addons>${itemAddons.value}</addons>
+            </ws:addMenuItem>
+          </soapenv:Body>
+        </soapenv:Envelope>`;
+      sendSoap(body).then(() => menuMsg.textContent = "✅ Menu item added");
+    }
+
+    function updateMenu() {
+      const body = `
+        <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+                          xmlns:ws="http://wsdl.fooddelivery.com/">
+          <soapenv:Body>
+            <ws:setMenuQuantity><menuItemId>${menuItemId.value}</menuItemId><quantity>${menuQty.value}</quantity></ws:setMenuQuantity>
+            <ws:setMenuAddons><menuItemId>${menuItemId.value}</menuItemId><addons>${menuAddons.value}</addons></ws:setMenuAddons>
+            <ws:setMenuAvailability><menuItemId>${menuItemId.value}</menuItemId><available>${menuAvail.value}</available></ws:setMenuAvailability>
+          </soapenv:Body>
+        </soapenv:Envelope>`;
+      sendSoap(body).then(() => updateMsg.textContent = "✅ Menu updated");
+    }
+
+    function setSchedule() {
+      const body = `
+        <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+                          xmlns:ws="http://wsdl.fooddelivery.com/">
+          <soapenv:Body>
+            <ws:setSchedule>
+              <restaurantId>${schedRestId.value}</restaurantId>
+              <openTime>${openTime.value}</openTime>
+              <closeTime>${closeTime.value}</closeTime>
+            </ws:setSchedule>
+          </soapenv:Body>
+        </soapenv:Envelope>`;
+      sendSoap(body).then(() => schedMsg.textContent = "✅ Schedule saved");
+    }
+
+    function assignRider() {
+      const body = `
+        <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+                          xmlns:ws="http://wsdl.fooddelivery.com/">
+          <soapenv:Body>
+            <ws:assignRiderToOrder>
+              <orderId>${orderId.value}</orderId>
+              <riderId>${riderId.value}</riderId>
+            </ws:assignRiderToOrder>
+          </soapenv:Body>
+        </soapenv:Envelope>`;
+      sendSoap(body).then(() => riderMsg.textContent = "✅ Rider assigned");
+    }
+
+    function getPayments() {
+      const body = `
+        <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+                          xmlns:ws="http://wsdl.fooddelivery.com/">
+          <soapenv:Body>
+            <ws:getPaymentsByRestaurant><restaurantId>${payRestId.value}</restaurantId></ws:getPaymentsByRestaurant>
+          </soapenv:Body>
+        </soapenv:Envelope>`;
+      sendSoap(body).then(xml => {
+        const doc = parseXML(xml);
+        const list = doc.getElementsByTagNameNS("*", "return");
+        payments.innerHTML = "";
+        for (let i = 0; i < list.length; i++) {
+          const id = getText(list[i], "id");
+          const method = getText(list[i], "method");
+          const status = getText(list[i], "status");
+          payments.innerHTML += `<li>Payment ${id} - ${method} (${status})</li>`;
+        }
+        if (list.length === 0) payments.innerHTML = "<li>No payments found.</li>";
+      });
+    }
+  </script>
+</body>
+</html>
