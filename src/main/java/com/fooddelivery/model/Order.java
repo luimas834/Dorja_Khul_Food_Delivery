@@ -1,11 +1,19 @@
 package com.fooddelivery.model;
 
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlRootElement;
+
+@XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Order {
     private int id;
     private int customerId;
     private int restaurantId;
     private double totalPrice;
     private String status;
+
+    public Order() {};
 
     public Order(int id, int customerId, int restaurantId, double totalPrice, String status) {
         this.id = id;

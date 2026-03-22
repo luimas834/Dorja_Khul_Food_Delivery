@@ -1,5 +1,11 @@
 package com.fooddelivery.model;
 
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlRootElement;
+
+@XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
 public class MenuItem {
     private int id;
     private int restaurantId;
@@ -8,6 +14,8 @@ public class MenuItem {
     private boolean available;
     private int quantity;
     private String addons;
+
+    public MenuItem() {};
 
     public MenuItem(int id, int restaurantId, String name, double price, boolean available, int quantity, String addons) {
         this.id = id;
