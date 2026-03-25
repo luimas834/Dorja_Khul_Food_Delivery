@@ -32,4 +32,11 @@ public class RestaurantSoapService {
     public List<MenuItem> getMenuByRestaurant(@WebParam(name="restaurantId") int restaurantId) throws Exception {
         return menuService.getAvailableMenu(restaurantId);
     }
+    @WebMethod
+    public void registerCustomer(
+            @WebParam(name="name") String name,
+            @WebParam(name="phone") String phone,
+            @WebParam(name="address") String address) throws Exception {
+        customerDao.addCustomer(name, phone, address);
+    }
 }

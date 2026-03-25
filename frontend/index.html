@@ -13,27 +13,36 @@
   <h2>Food Delivery - Customer UI</h2>
 
   <div class="section">
-    <h3>1) Customers (Choose yourself)</h3>
+    <h3>Register New Customer</h3>
+    <input id="custName" placeholder="Name" />
+    <input id="custPhone" placeholder="Phone" />
+    <input id="custAddress" placeholder="Address" />
+    <button onclick="registerCustomer()">Register</button>
+    <div id="custMsg" class="msg"></div>
+  </div>
+
+  <div class="section">
+    <h3>Customers (Choose yourself)</h3>
     <button onclick="loadCustomers()">Load Customers</button>
     <ul id="customers"></ul>
   </div>
 
   <div class="section">
-    <h3>2) Restaurants by Area</h3>
+    <h3>Restaurants by Area</h3>
     <input id="area" placeholder="Area (e.g. 789 Oak)" />
     <button onclick="getRestaurants()">Search</button>
     <ul id="restaurants"></ul>
   </div>
 
   <div class="section">
-    <h3>3) Menu by Restaurant</h3>
+    <h3>Menu by Restaurant</h3>
     <input id="restaurantId" placeholder="Restaurant ID" />
     <button onclick="getMenu()">Get Menu</button>
     <ul id="menu"></ul>
   </div>
 
   <div class="section">
-    <h3>4) Place Order</h3>
+    <h3>Place Order</h3>
     <input id="customerId" placeholder="Customer ID" />
     <input id="menuItemId" placeholder="Menu Item ID" />
     <input id="qty" placeholder="Quantity" />
@@ -43,7 +52,7 @@
   </div>
 
   <div class="section">
-    <h3>5) Pay + Assign Rider</h3>
+    <h3>Pay + Assign Rider</h3>
     <input id="orderIdPay" placeholder="Order ID" />
     <input id="payMethod" placeholder="CASH or CARD" />
     <button onclick="payOrder()">Pay</button>
@@ -52,7 +61,7 @@
   </div>
 
   <div class="section">
-    <h3>6) Delivery Progress</h3>
+    <h3>Delivery Progress</h3>
     <input id="orderIdProgress" placeholder="Order ID" />
     <select id="progressStatus">
       <option value="PREPARING">PREPARING</option>
@@ -64,7 +73,7 @@
   </div>
 
   <div class="section">
-    <h3>7) Track Order</h3>
+    <h3>Track Order</h3>
     <input id="orderIdTrack" placeholder="Order ID" />
     <button onclick="trackOrder()">Track</button>
     <div id="trackResult" class="msg"></div>
@@ -90,6 +99,23 @@
     function getText(node, tag) {
       const el = node.getElementsByTagNameNS("*", tag)[0];
       return el ? el.textContent : "";
+    }
+
+    function registerCustomer() {
+      const body = `
+        <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+                          xmlns:ws="http://wsdl.fooddelivery.com/">
+          <soapenv:Body>
+            <ws:registerCustomer>
+              <name>${custName.value}</name>
+              <phone>${custPhone.value}</phone>
+              <address>${custAddress.value}</address>
+            </ws:registerCustomer>
+          </soapenv:Body>
+        </soapenv:Envelope>`;
+      sendSoap(SOAP_URL_RESTAURANT, body).then(() => {
+        custMsg.textContent = "✅ Customer registered!";
+      });
     }
 
     function loadCustomers() {
