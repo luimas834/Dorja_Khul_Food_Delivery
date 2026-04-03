@@ -1,308 +1,207 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Food Delivery UI</title>
-  <style>
-    body { font-family: Arial; margin: 20px; }
-    .section { border: 1px solid #ccc; padding: 15px; margin-bottom: 20px; }
-    ul { padding-left: 18px; }
-    .msg { margin-top: 6px; font-weight: bold; }
-  </style>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>দরজা খুল — Dorja Khul</title>
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="index.css"/>
 </head>
 <body>
-  <h2>Food Delivery - Customer UI</h2>
 
-  <div class="section">
-    <h3>Register New Customer</h3>
-    <input id="custName" placeholder="Name" />
-    <input id="custPhone" placeholder="Phone" />
-    <input id="custAddress" placeholder="Address" />
-    <button onclick="registerCustomer()">Register</button>
-    <div id="custMsg" class="msg"></div>
+<nav>
+  <div class="logo">
+    🚪 Dorja Khul
+    <span class="logo-sub">দরজা খুল</span>
+  </div>
+  <div class="nav-tabs">
+    <button class="tab-btn active" onclick="showPage('discover',this)">🏪 Discover</button>
+    <button class="tab-btn" onclick="showPage('order',this)">🛒 Order</button>
+    <button class="tab-btn" onclick="showPage('myorders',this)">📋 My Orders</button>
+    <button class="tab-btn" onclick="showPage('track',this)">📡 Track</button>
+    <button class="tab-btn" onclick="showPage('account',this)">👤 Account</button>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="hero-eyebrow">🔥 Fast delivery across the city</div>
+  <h1>Open the door to <em>great food.</em></h1>
+  <p>Browse restaurants near you and get your meal delivered fast.</p>
+  <div class="hero-bn">দরজা খুল · Your city, your kitchen</div>
+</div>
+
+<div class="main">
+
+  <!-- ═══ DISCOVER ═══ -->
+  <div class="page active" id="page-discover">
+
+    <div class="card">
+      <div class="card-title">🏪 All Restaurants</div>
+      <div class="actions" style="margin-top:0;margin-bottom:.9rem;">
+        <button class="btn btn-primary" onclick="loadAllRestaurants()">🔄 Load All</button>
+      </div>
+      <div id="all-restaurants"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">📍 Search by Area</div>
+      <div class="g2">
+        <div class="field">
+          <label>Neighbourhood / Street</label>
+          <input id="area" placeholder="e.g. Dhanmondi, Gulshan, Banani…"/>
+        </div>
+        <div style="display:flex;align-items:flex-end;">
+          <button class="btn btn-primary" onclick="searchRestaurants()" style="width:100%">🔍 Search</button>
+        </div>
+      </div>
+      <div id="search-restaurants" style="margin-top:.9rem;"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🍽️ Menu</div>
+      <div class="g2">
+        <div class="field">
+          <label>Restaurant ID</label>
+          <input id="restaurantId" placeholder="Click a restaurant above or type ID"/>
+        </div>
+        <div style="display:flex;align-items:flex-end;">
+          <button class="btn btn-primary" onclick="loadMenu()" style="width:100%">📋 Load Menu</button>
+        </div>
+      </div>
+      <div id="menu-list" style="margin-top:.9rem;"></div>
+    </div>
+
   </div>
 
-  <div class="section">
-    <h3>Customers (Choose yourself)</h3>
-    <button onclick="loadCustomers()">Load Customers</button>
-    <ul id="customers"></ul>
+  <!-- ═══ ORDER ═══ -->
+  <div class="page" id="page-order">
+
+    <div class="card">
+      <div class="card-title">🛒 Place Order</div>
+      <div class="g2">
+        <div class="field"><label>Customer ID</label><input id="customerId" placeholder="Your customer ID"/></div>
+        <div class="field"><label>Restaurant ID</label><input id="ord-restId" placeholder="Restaurant ID"/></div>
+        <div class="field"><label>Menu Item ID</label><input id="menuItemId" placeholder="Item ID from menu"/></div>
+        <div class="field"><label>Quantity</label><input id="qty" type="number" placeholder="1" min="1"/></div>
+        <div class="field" style="grid-column:span 2">
+          <label>Coupon Code <span style="font-weight:400;text-transform:none;font-size:.68rem">(optional)</span></label>
+          <input id="coupon" placeholder="e.g. SAVE20"/>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn btn-primary" onclick="placeOrder()">🛍️ Place Order</button>
+      </div>
+      <div id="orderResult" class="msg"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">💳 Payment</div>
+      <div class="g2">
+        <div class="field"><label>Order ID</label><input id="orderIdPay" placeholder="Order ID"/></div>
+        <div class="field">
+          <label>Method</label>
+          <select id="payMethod">
+            <option value="CASH">💵 Cash on Delivery</option>
+            <option value="CARD">💳 Card</option>
+          </select>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn btn-primary" onclick="payOrder()">✅ Pay Now</button>
+        <button class="btn btn-outline" onclick="assignRider()">🛵 Auto-Assign Rider</button>
+      </div>
+      <div id="payResult" class="msg"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">📦 Delivery Progress</div>
+      <div class="g2">
+        <div class="field"><label>Order ID</label><input id="orderIdProgress" placeholder="Order ID"/></div>
+        <div class="field">
+          <label>Status</label>
+          <select id="progressStatus">
+            <option value="PREPARING">🍳 Preparing</option>
+            <option value="OUT_FOR_DELIVERY">🛵 Out for Delivery</option>
+            <option value="DELIVERED">✅ Delivered</option>
+          </select>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn btn-primary" onclick="updateProgress()">Update Progress</button>
+      </div>
+      <div id="progressResult" class="msg"></div>
+    </div>
+
   </div>
 
-  <div class="section">
-    <h3>Restaurants by Area</h3>
-    <input id="area" placeholder="Area (e.g. 789 Oak)" />
-    <button onclick="getRestaurants()">Search</button>
-    <ul id="restaurants"></ul>
+  <!-- ═══ MY ORDERS ═══ -->
+  <div class="page" id="page-myorders">
+
+    <div class="card">
+      <div class="card-title">📋 Order History</div>
+      <div class="g2">
+        <div class="field">
+          <label>Your Customer ID</label>
+          <input id="historyCustomerId" placeholder="Enter your customer ID"/>
+        </div>
+        <div style="display:flex;align-items:flex-end;">
+          <button class="btn btn-primary" onclick="loadOrderHistory()" style="width:100%">🔄 Load Orders</button>
+        </div>
+      </div>
+      <div id="order-history" style="margin-top:.9rem;"></div>
+    </div>
+
   </div>
 
-  <div class="section">
-    <h3>Menu by Restaurant</h3>
-    <input id="restaurantId" placeholder="Restaurant ID" />
-    <button onclick="getMenu()">Get Menu</button>
-    <ul id="menu"></ul>
+  <!-- ═══ TRACK ═══ -->
+  <div class="page" id="page-track">
+
+    <div class="card">
+      <div class="card-title">📡 Track Order</div>
+      <div class="g2">
+        <div class="field">
+          <label>Order ID</label>
+          <input id="orderIdTrack" placeholder="Enter your order ID"/>
+        </div>
+        <div style="display:flex;align-items:flex-end;">
+          <button class="btn btn-primary" onclick="trackOrder()" style="width:100%">🔎 Track</button>
+        </div>
+      </div>
+      <div id="trackResult" style="margin-top:.9rem;"></div>
+    </div>
+
   </div>
 
-  <div class="section">
-    <h3>Place Order</h3>
-    <input id="customerId" placeholder="Customer ID" />
-    <input id="menuItemId" placeholder="Menu Item ID" />
-    <input id="qty" placeholder="Quantity" />
-    <input id="coupon" placeholder="Coupon (optional)" />
-    <button onclick="placeOrder()">Place Order</button>
-    <div id="orderResult" class="msg"></div>
+  <!-- ═══ ACCOUNT ═══ -->
+  <div class="page" id="page-account">
+
+    <div class="card">
+      <div class="card-title">👤 Register as Customer</div>
+      <div class="g3">
+        <div class="field"><label>Full Name</label><input id="custName" placeholder="Your name"/></div>
+        <div class="field"><label>Phone</label><input id="custPhone" placeholder="+880 …"/></div>
+        <div class="field"><label>Delivery Address</label><input id="custAddress" placeholder="Street, Area"/></div>
+      </div>
+      <div class="actions">
+        <button class="btn btn-primary" onclick="registerCustomer()">📝 Register</button>
+      </div>
+      <div id="custMsg" class="msg"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">👥 All Registered Customers</div>
+      <div class="actions" style="margin-top:0;margin-bottom:.9rem;">
+        <button class="btn btn-outline btn-sm" onclick="loadCustomers()">🔄 Refresh</button>
+      </div>
+      <div id="customers-list"></div>
+    </div>
+
   </div>
 
-  <div class="section">
-    <h3>Pay + Assign Rider</h3>
-    <input id="orderIdPay" placeholder="Order ID" />
-    <input id="payMethod" placeholder="CASH or CARD" />
-    <button onclick="payOrder()">Pay</button>
-    <button onclick="assignRider()">Assign Rider</button>
-    <div id="payResult" class="msg"></div>
-  </div>
+</div>
 
-  <div class="section">
-    <h3>Delivery Progress</h3>
-    <input id="orderIdProgress" placeholder="Order ID" />
-    <select id="progressStatus">
-      <option value="PREPARING">PREPARING</option>
-      <option value="OUT_FOR_DELIVERY">OUT_FOR_DELIVERY</option>
-      <option value="DELIVERED">DELIVERED</option>
-    </select>
-    <button onclick="updateProgress()">Update Progress</button>
-    <div id="progressResult" class="msg"></div>
-  </div>
+<footer>© 2025 Dorja Khul · দরজা খুল · Food Delivery Platform</footer>
 
-  <div class="section">
-    <h3>Track Order</h3>
-    <input id="orderIdTrack" placeholder="Order ID" />
-    <button onclick="trackOrder()">Track</button>
-    <div id="trackResult" class="msg"></div>
-  </div>
-
-  <script>
-    const SOAP_URL_RESTAURANT = "http://localhost:8080/RestaurantService";
-    const SOAP_URL_ORDER = "http://localhost:8080/OrderService";
-
-    async function sendSoap(url, body) {
-      const res = await fetch(url, {
-        method: "POST",
-        headers: { "Content-Type": "text/xml" },
-        body
-      });
-      return await res.text();
-    }
-
-    function parseXML(xmlText) {
-      return new DOMParser().parseFromString(xmlText, "text/xml");
-    }
-
-    function getText(node, tag) {
-      const el = node.getElementsByTagNameNS("*", tag)[0];
-      return el ? el.textContent : "";
-    }
-
-    function registerCustomer() {
-      const body = `
-        <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
-                          xmlns:ws="http://wsdl.fooddelivery.com/">
-          <soapenv:Body>
-            <ws:registerCustomer>
-              <name>${custName.value}</name>
-              <phone>${custPhone.value}</phone>
-              <address>${custAddress.value}</address>
-            </ws:registerCustomer>
-          </soapenv:Body>
-        </soapenv:Envelope>`;
-      sendSoap(SOAP_URL_RESTAURANT, body).then(() => {
-        custMsg.textContent = "✅ Customer registered!";
-      });
-    }
-
-    function loadCustomers() {
-      const body = `
-        <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
-                          xmlns:ws="http://wsdl.fooddelivery.com/">
-          <soapenv:Body><ws:getAllCustomers/></soapenv:Body>
-        </soapenv:Envelope>`;
-      sendSoap(SOAP_URL_RESTAURANT, body).then(xml => {
-        const doc = parseXML(xml);
-        const list = doc.getElementsByTagNameNS("*", "return");
-        const ul = document.getElementById("customers");
-        ul.innerHTML = "";
-
-        if (list.length === 0) {
-          ul.innerHTML = "<li>No customers found.</li>";
-          return;
-        }
-
-        for (let i = 0; i < list.length; i++) {
-          const id = getText(list[i], "id");
-          const name = getText(list[i], "name");
-          const address = getText(list[i], "address");
-          ul.innerHTML += `<li>ID ${id} - ${name} (${address})</li>`;
-        }
-      });
-    }
-
-    function getRestaurants() {
-      const area = document.getElementById("area").value;
-      const body = `
-        <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
-                          xmlns:ws="http://wsdl.fooddelivery.com/">
-          <soapenv:Body>
-            <ws:getRestaurantsByArea><area>${area}</area></ws:getRestaurantsByArea>
-          </soapenv:Body>
-        </soapenv:Envelope>`;
-      sendSoap(SOAP_URL_RESTAURANT, body).then(xml => {
-        const doc = parseXML(xml);
-        const list = doc.getElementsByTagNameNS("*", "return");
-        const ul = document.getElementById("restaurants");
-        ul.innerHTML = "";
-
-        if (list.length === 0) {
-          ul.innerHTML = "<li>No restaurants found in this area.</li>";
-          return;
-        }
-
-        for (let i = 0; i < list.length; i++) {
-          const id = getText(list[i], "id");
-          const name = getText(list[i], "name");
-          const address = getText(list[i], "address");
-          ul.innerHTML += `<li>ID ${id} - ${name} (${address})</li>`;
-        }
-      });
-    }
-
-    function getMenu() {
-      const id = document.getElementById("restaurantId").value;
-      const body = `
-        <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
-                          xmlns:ws="http://wsdl.fooddelivery.com/">
-          <soapenv:Body>
-            <ws:getMenuByRestaurant><restaurantId>${id}</restaurantId></ws:getMenuByRestaurant>
-          </soapenv:Body>
-        </soapenv:Envelope>`;
-      sendSoap(SOAP_URL_RESTAURANT, body).then(xml => {
-        const doc = parseXML(xml);
-        const list = doc.getElementsByTagNameNS("*", "return");
-        const ul = document.getElementById("menu");
-        ul.innerHTML = "";
-
-        if (list.length === 0) {
-          ul.innerHTML = "<li>No menu items found.</li>";
-          return;
-        }
-
-        for (let i = 0; i < list.length; i++) {
-          const id = getText(list[i], "id");
-          const name = getText(list[i], "name");
-          const price = getText(list[i], "price");
-          ul.innerHTML += `<li>ID ${id} - ${name} ($${price})</li>`;
-        }
-      });
-    }
-
-    function placeOrder() {
-      const customerId = document.getElementById("customerId").value;
-      const restaurantId = document.getElementById("restaurantId").value;
-      const menuItemId = document.getElementById("menuItemId").value;
-      const qty = document.getElementById("qty").value;
-      const coupon = document.getElementById("coupon").value;
-
-      const body = `
-        <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
-                          xmlns:ws="http://wsdl.fooddelivery.com/">
-          <soapenv:Body>
-            <ws:placeOrder>
-              <customerId>${customerId}</customerId>
-              <restaurantId>${restaurantId}</restaurantId>
-              <menuItemId>${menuItemId}</menuItemId>
-              <quantity>${qty}</quantity>
-              <couponCode>${coupon}</couponCode>
-            </ws:placeOrder>
-          </soapenv:Body>
-        </soapenv:Envelope>`;
-      sendSoap(SOAP_URL_ORDER, body).then(xml => {
-        const doc = parseXML(xml);
-        const orderId = doc.getElementsByTagNameNS("*", "return")[0]?.textContent;
-        document.getElementById("orderResult").textContent =
-          orderId ? `✅ Order placed! Order ID: ${orderId}` : "❌ Order failed.";
-      });
-    }
-
-    function payOrder() {
-      const orderId = document.getElementById("orderIdPay").value;
-      const method = document.getElementById("payMethod").value;
-
-      const body = `
-        <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
-                          xmlns:ws="http://wsdl.fooddelivery.com/">
-          <soapenv:Body>
-            <ws:payOrder><orderId>${orderId}</orderId><method>${method}</method></ws:payOrder>
-          </soapenv:Body>
-        </soapenv:Envelope>`;
-      sendSoap(SOAP_URL_ORDER, body).then(() => {
-        document.getElementById("payResult").textContent = "✅ Payment success!";
-      });
-    }
-
-    function assignRider() {
-      const orderId = document.getElementById("orderIdPay").value;
-      const body = `
-        <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
-                          xmlns:ws="http://wsdl.fooddelivery.com/">
-          <soapenv:Body>
-            <ws:assignRider><orderId>${orderId}</orderId></ws:assignRider>
-          </soapenv:Body>
-        </soapenv:Envelope>`;
-      sendSoap(SOAP_URL_ORDER, body).then(() => {
-        document.getElementById("payResult").textContent = "✅ Rider assigned!";
-      });
-    }
-
-    function updateProgress() {
-      const orderId = document.getElementById("orderIdProgress").value;
-      const progress = document.getElementById("progressStatus").value;
-
-      const body = `
-        <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
-                          xmlns:ws="http://wsdl.fooddelivery.com/">
-          <soapenv:Body>
-            <ws:updateDeliveryProgress>
-              <orderId>${orderId}</orderId>
-              <progress>${progress}</progress>
-            </ws:updateDeliveryProgress>
-          </soapenv:Body>
-        </soapenv:Envelope>`;
-      sendSoap(SOAP_URL_ORDER, body).then(() => {
-        document.getElementById("progressResult").textContent = "✅ Progress updated!";
-      });
-    }
-
-    function trackOrder() {
-      const orderId = document.getElementById("orderIdTrack").value;
-      const body = `
-        <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
-                          xmlns:ws="http://wsdl.fooddelivery.com/">
-          <soapenv:Body>
-            <ws:trackOrder><orderId>${orderId}</orderId></ws:trackOrder>
-          </soapenv:Body>
-        </soapenv:Envelope>`;
-      sendSoap(SOAP_URL_ORDER, body).then(xml => {
-        const doc = parseXML(xml);
-        const order = doc.getElementsByTagNameNS("*", "return")[0];
-
-        if (!order) {
-          document.getElementById("trackResult").textContent = "❌ Order not found.";
-          return;
-        }
-
-        const status = getText(order, "status");
-        const total = getText(order, "totalPrice");
-        document.getElementById("trackResult").textContent =
-          `✅ Status: ${status}, Total: ${total}`;
-      });
-    }
-  </script>
+<script src="index.js"></script>
 </body>
 </html>

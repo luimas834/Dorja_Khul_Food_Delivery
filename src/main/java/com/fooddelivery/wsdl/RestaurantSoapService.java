@@ -15,8 +15,8 @@ import java.util.List;
 @WebService(targetNamespace = "http://wsdl.fooddelivery.com/")
 public class RestaurantSoapService {
     private final RestaurantService restaurantService = new RestaurantService();
-    private final MenuService menuService = new MenuService();
-    private final CustomerDao customerDao = new CustomerDao();
+    private final MenuService menuService= new MenuService();
+    private final CustomerDao customerDao= new CustomerDao();
 
     @WebMethod
     public List<Customer> getAllCustomers() throws Exception {
@@ -24,19 +24,25 @@ public class RestaurantSoapService {
     }
 
     @WebMethod
-    public List<Restaurant> getRestaurantsByArea(@WebParam(name="area") String area) throws Exception {
+    public List<Restaurant> getAllRestaurants() throws Exception {
+        return restaurantService.getAllRestaurantsSorted();
+    }
+    
+    @WebMethod
+    public List<Restaurant> getRestaurantsByArea(@WebParam(name = "area") String area) throws Exception {
         return restaurantService.findByAreaSorted(area == null ? "" : area.trim());
     }
 
     @WebMethod
-    public List<MenuItem> getMenuByRestaurant(@WebParam(name="restaurantId") int restaurantId) throws Exception {
+    public List<MenuItem> getMenuByRestaurant(@WebParam(name = "restaurantId") int restaurantId) throws Exception {
         return menuService.getAvailableMenu(restaurantId);
     }
+
     @WebMethod
     public void registerCustomer(
-            @WebParam(name="name") String name,
-            @WebParam(name="phone") String phone,
-            @WebParam(name="address") String address) throws Exception {
+            @WebParam(name = "name")    String name,
+            @WebParam(name = "phone")   String phone,
+            @WebParam(name = "address") String address) throws Exception {
         customerDao.addCustomer(name, phone, address);
     }
 }

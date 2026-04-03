@@ -13,7 +13,7 @@ public class Order {
     private double totalPrice;
     private String status;
 
-    public Order() {};
+    public Order() {}
 
     public Order(int id, int customerId, int restaurantId, double totalPrice, String status) {
         this.id = id;
@@ -23,9 +23,15 @@ public class Order {
         this.status = status;
     }
 
-    public int getId() { return id; }
-    public int getCustomerId() { return customerId; }
-    public int getRestaurantId() { return restaurantId; }
-    public double getTotalPrice() { return totalPrice; }
-    public String getStatus() { return status; }
+    public int getId(){ return id; }
+    public int getCustomerId(){ return customerId; }
+    public int getRestaurantId(){ return restaurantId; }
+    public double getTotalPrice(){ return totalPrice; }
+    public String getStatus(){ return status; }
+
+    public void setId(int id){ this.id = id; }
+    public void setCustomerId(int customerId){ this.customerId = customerId; }
+    public void setRestaurantId(int restaurantId){ this.restaurantId = restaurantId; }
+    public void setTotalPrice(double totalPrice){ this.totalPrice = totalPrice; }
+    public void setStatus(String status){ this.status = status; }
 }
